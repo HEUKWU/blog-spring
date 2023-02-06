@@ -1,16 +1,16 @@
 package com.hello.spring.dto;
 
 import com.hello.spring.entity.Blog;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 public class BlogResponseDto {
-    private String title;
-    private String userName;
-    private String contents;
-    private LocalDateTime createdAt;
+    private final String title;
+    private final String userName;
+    private final String contents;
+    private final LocalDateTime createdAt;
 
     public BlogResponseDto(Blog blog) {
         this.title = blog.getTitle();
