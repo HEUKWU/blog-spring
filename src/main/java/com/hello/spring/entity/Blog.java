@@ -12,7 +12,7 @@ import javax.persistence.*;
 public class Blog extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long id; 
 
     @Column(nullable = false)
     private String title;
@@ -35,12 +35,8 @@ public class Blog extends Timestamped {
     }
 
     public void update(BlogRequestDto requestDto) {
-        if (requestDto.getPassword().equals(this.password)) {
-            this.username = requestDto.getUsername();
-            this.title = requestDto.getTitle();
-            this.contents = requestDto.getContents();
-        } else {
-            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
-        }
+        this.username = requestDto.getUsername();
+        this.title = requestDto.getTitle();
+        this.contents = requestDto.getContents();
     }
 }

@@ -37,6 +37,29 @@
             });
         }
 
+        function getSelectedMessages() {
+            // 1. 기존 메모 내용을 지웁니다.
+            $('#cards-box').empty();
+
+            // 2. 메모 목록을 불러와서 HTML로 붙입니다.
+            $.ajax({
+                type: "GET",
+                url: "/api/blog/{id}",
+                data: {},
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        let message = response[i];
+                        let id = message['id'];
+                        let title = message['title'];
+                        let username = message['username'];
+                        let contents = message['contents'];
+                        let modifiedAt = message['modifiedAt'];
+                        addHTML(id, title, username, contents, modifiedAt);
+                    }
+                }
+            });
+        }
+
         // 메모 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
         function addHTML(id, title, username, contents, modifiedAt) {
             let tempHtml = makeMessage(id, title, username, contents, modifiedAt);

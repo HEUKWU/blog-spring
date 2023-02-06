@@ -31,6 +31,11 @@ public class BlogController {
         return blogService.getBlog();
     }
 
+    @GetMapping("/api/blog/{id}")
+    public Blog getSelectedBlog(@PathVariable Long id) {
+        return blogService.getSelectedBlog(id);
+    }
+
     @PutMapping("/api/blog/{id}")
     public Long updateBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
         return blogService.update(id, requestDto);

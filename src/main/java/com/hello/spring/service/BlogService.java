@@ -34,9 +34,12 @@ public class BlogService {
         Blog blog = blogRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-
-        blog.update(requestDto);
-        return blog.getId();
+        if (blog.getPassword().equals(requestDto.getPassword())) {
+            blog.update(requestDto);
+            return blog.getId();
+        } else {
+            throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
+        }
 
     }
 
@@ -44,12 +47,17 @@ public class BlogService {
         Blog blog = blogRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-
         if (blog.getPassword().equals(dto.getPassword())) {
             blogRepository.deleteById(id);
         } else {
             throw new IllegalStateException("비밀번호가 일치하지 않습니다.");
         }
         return blog.getId();
+    }
+
+    public Blog getSelectedBlog(Long id) {
+        return blogRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
+        );
     }
 }
