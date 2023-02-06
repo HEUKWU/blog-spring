@@ -1,6 +1,7 @@
 package com.hello.spring.service;
 
 import com.hello.spring.dto.BlogRequestDto;
+import com.hello.spring.dto.BlogResponseDto;
 import com.hello.spring.dto.PasswordDto;
 import com.hello.spring.entity.Blog;
 import com.hello.spring.repository.BlogRepository;
@@ -8,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,16 +20,18 @@ public class BlogService {
     private final BlogRepository blogRepository;
 
     @Transactional
-    public Blog createBlog(BlogRequestDto requestDto) {
-
+    public BlogResponseDto createBlog(BlogRequestDto requestDto) {
         Blog blog = new Blog(requestDto);
         blogRepository.save(blog);
-        return blog;
+        return new BlogResponseDto(blog);
     }
 
     @Transactional(readOnly = true)
-    public List<Blog> getBlog() {
-        return blogRepository.findAllByOrderByModifiedAtDesc();
+    public List<BlogResponseDto> getBlog() {
+        List<Blog> list = blogRepository.findAllByOrderByModifiedAtDesc();
+        return list.stream()
+                .map(BlogResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -37,8 +42,9 @@ public class BlogService {
         return blog.getId();
     }
 
-    public Blog getSelectedBlog(Long id) {
-        return findByValidateId(id);
+    public BlogResponseDto getSelectedBlog(Long id) {
+        Blog blog = findByValidateId(id);
+        return new BlogResponseDto(blog);
     }
 
     public Long deleteBlog(Long id, PasswordDto dto) {

@@ -1,8 +1,8 @@
 package com.hello.spring.controller;
 
 import com.hello.spring.dto.BlogRequestDto;
+import com.hello.spring.dto.BlogResponseDto;
 import com.hello.spring.dto.PasswordDto;
-import com.hello.spring.entity.Blog;
 import com.hello.spring.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +22,17 @@ public class BlogController {
     }
 
     @PostMapping("/api/blog")
-    public Blog createBlog(@RequestBody BlogRequestDto requestDto) {
+    public BlogResponseDto createBlog(@RequestBody BlogRequestDto requestDto) {
         return blogService.createBlog(requestDto);
     }
 
     @GetMapping("/api/blog")
-    public List<Blog> getBlog() {
+    public List<BlogResponseDto> getBlog() {
         return blogService.getBlog();
     }
 
     @GetMapping("/api/blog/{id}")
-    public Blog getSelectedBlog(@PathVariable Long id) {
+    public BlogResponseDto getSelectedBlog(@PathVariable Long id) {
         return blogService.getSelectedBlog(id);
     }
 
