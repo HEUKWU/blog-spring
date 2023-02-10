@@ -2,12 +2,12 @@ package com.hello.spring.controller;
 
 import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.dto.BlogResponseDto;
-import com.hello.spring.dto.PasswordDto;
 import com.hello.spring.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -22,8 +22,8 @@ public class BlogController {
     }
 
     @PostMapping("/api/blog")
-    public BlogResponseDto createBlog(@RequestBody BlogRequestDto requestDto) {
-        return blogService.createBlog(requestDto);
+    public BlogResponseDto createBlog(@RequestBody BlogRequestDto requestDto, HttpServletRequest request) {
+        return blogService.createBlog(requestDto, request);
     }
 
     @GetMapping("/api/blog")
@@ -37,12 +37,12 @@ public class BlogController {
     }
 
     @PutMapping("/api/blog/{id}")
-    public Long updateBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
-        return blogService.update(id, requestDto);
+    public BlogResponseDto updateBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto, HttpServletRequest request) {
+        return blogService.update(id, requestDto, request);
     }
 
     @DeleteMapping("/api/blog/{id}")
-    public Long deleteBlog(@PathVariable Long id, @RequestBody PasswordDto dto) {
-        return blogService.deleteBlog(id, dto);
+    public String deleteBlog(@PathVariable Long id, HttpServletRequest request) {
+        return blogService.deleteBlog(id, request);
     }
 }

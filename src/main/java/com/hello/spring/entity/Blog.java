@@ -24,14 +24,14 @@ public class Blog extends Timestamped {
     private String contents;
 
     @Column(nullable = false)
-    private String password;
+    private Long userId;
 
-    public Blog(BlogRequestDto requestDto) {
+    public Blog(BlogRequestDto requestDto, Long userId) {
+
         this.username = requestDto.getUsername();
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-        this.password = requestDto.getPassword();
-
+        this.userId = userId;
     }
 
     public void update(BlogRequestDto requestDto) {
