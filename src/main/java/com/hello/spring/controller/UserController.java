@@ -2,6 +2,7 @@ package com.hello.spring.controller;
 
 import com.hello.spring.dto.LoginRequestDto;
 import com.hello.spring.dto.SignupRequestDto;
+import com.hello.spring.dto.StatusResponseDto;
 import com.hello.spring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,16 +18,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public String signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
-        userService.signup(signupRequestDto);
-        return "success";
+    public StatusResponseDto signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+        return userService.signup(signupRequestDto);
     }
 
     @ResponseBody
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        userService.login(loginRequestDto, response);
-        return "success";
+    public StatusResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+        return userService.login(loginRequestDto, response);
     }
 
 }

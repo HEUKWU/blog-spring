@@ -2,6 +2,7 @@ package com.hello.spring.service;
 
 import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.dto.BlogResponseDto;
+import com.hello.spring.dto.StatusResponseDto;
 import com.hello.spring.entity.Blog;
 import com.hello.spring.entity.User;
 import com.hello.spring.jwt.JwtUtil;
@@ -34,8 +35,8 @@ public class BlogService {
 
             User user = validateUser(claims);
 
-            Blog blog = blogRepository.saveAndFlush(new Blog(requestDto, user.getId(), user.getUsername()));
-            return new BlogResponseDto(blog);
+            Blog blog = blogRepository.saveAndFlush(new Blog(requestDto));
+            return new BlogResponseDto(blog, user);
         } else{
             return null;
         }
@@ -62,8 +63,8 @@ public class BlogService {
             Blog blog = blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                     () -> new NullPointerException("해당 게시물은 존재하지 않습니다.")
             );
-            blog.update(requestDto, user.getUsername());
-            return new BlogResponseDto(blog);
+            blog.update(requestDto);
+            return new BlogResponseDto(blog, user);
         } else {
             return null;
         }
@@ -74,10 +75,12 @@ public class BlogService {
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
 
-        return new BlogResponseDto(blog);
+        User user = userRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+
+        return new BlogResponseDto(blog, user);
     }
 
-    public String deleteBlog(Long id, HttpServletRequest request) {
+    public StatusResponseDto deleteBlog(Long id, HttpServletRequest request) {
 
         String token = jwtUtil.resolveToken(request);
 
@@ -88,7 +91,7 @@ public class BlogService {
             User user = validateUser(claims);
 
             blogRepository.deleteById(id);
-            return "success";
+            return new StatusResponseDto("게시글 삭제 성공", 200);
         } else {
             return null;
         }

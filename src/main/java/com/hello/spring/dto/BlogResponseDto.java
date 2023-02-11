@@ -1,6 +1,7 @@
 package com.hello.spring.dto;
 
 import com.hello.spring.entity.Blog;
+import com.hello.spring.entity.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -11,11 +12,22 @@ public class BlogResponseDto {
     private final String userName;
     private final String contents;
     private final LocalDateTime createdAt;
+    private final LocalDateTime modifiedAt;
+
+    public BlogResponseDto(Blog blog, User user) {
+        this.title = blog.getTitle();
+        this.userName = user.getUsername();
+        this.contents = blog.getContents();
+        this.createdAt = blog.getCreatedAt();
+        this.modifiedAt = blog.getModifiedAt();
+    }
 
     public BlogResponseDto(Blog blog) {
         this.title = blog.getTitle();
-        this.userName = blog.getUsername();
+        this.userName = blog.getUser().getUsername();
         this.contents = blog.getContents();
         this.createdAt = blog.getCreatedAt();
+        this.modifiedAt = blog.getModifiedAt();
     }
+
 }

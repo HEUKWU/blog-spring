@@ -18,24 +18,19 @@ public class Blog extends Timestamped {
     private String title;
 
     @Column(nullable = false)
-    private String username;
-
-    @Column(nullable = false)
     private String contents;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "userId")
+    private User user;
 
-    public Blog(BlogRequestDto requestDto, Long userId, String username) {
+    public Blog(BlogRequestDto requestDto) {
 
-        this.username = username;
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-        this.userId = userId;
     }
 
-    public void update(BlogRequestDto requestDto, String username) {
-        this.username = username;
+    public void update(BlogRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
     }

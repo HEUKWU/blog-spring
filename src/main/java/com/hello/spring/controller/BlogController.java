@@ -2,6 +2,7 @@ package com.hello.spring.controller;
 
 import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.dto.BlogResponseDto;
+import com.hello.spring.dto.StatusResponseDto;
 import com.hello.spring.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class BlogController {
     }
 
     @DeleteMapping("/api/blog/{id}")
-    public String deleteBlog(@PathVariable Long id, HttpServletRequest request) {
+    public StatusResponseDto deleteBlog(@PathVariable Long id, HttpServletRequest request) {
         return blogService.deleteBlog(id, request);
     }
 }

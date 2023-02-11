@@ -4,7 +4,7 @@ import javax.validation.constraints.Pattern;
 
 public class SignupRequestDto {
 
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*\\d).{4,10}$")
+    @Pattern(regexp = "[a-z0-9]{4,10}$")
     private String username;
 
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,15}$")

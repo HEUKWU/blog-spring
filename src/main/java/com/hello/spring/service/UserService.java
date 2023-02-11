@@ -2,6 +2,7 @@ package com.hello.spring.service;
 
 import com.hello.spring.dto.LoginRequestDto;
 import com.hello.spring.dto.SignupRequestDto;
+import com.hello.spring.dto.StatusResponseDto;
 import com.hello.spring.entity.User;
 import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.UserRepository;
@@ -21,7 +22,7 @@ public class UserService {
 //    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
-    public void signup(SignupRequestDto signupRequestDto) {
+    public StatusResponseDto signup(SignupRequestDto signupRequestDto) {
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
 
@@ -33,10 +34,11 @@ public class UserService {
 
         User user = new User(username, password);
         userRepository.save(user);
+        return new StatusResponseDto("회원가입 성공", 200);
     }
 
     @Transactional(readOnly = true)
-    public void login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public StatusResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
@@ -50,5 +52,6 @@ public class UserService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername()));
+        return new StatusResponseDto("로그인 성공", 200);
     }
 }
