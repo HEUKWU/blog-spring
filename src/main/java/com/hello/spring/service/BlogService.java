@@ -34,7 +34,7 @@ public class BlogService {
 
             User user = validateUser(claims);
 
-            Blog blog = blogRepository.saveAndFlush(new Blog(requestDto, user.getId()));
+            Blog blog = blogRepository.saveAndFlush(new Blog(requestDto, user.getId(), user.getUsername()));
             return new BlogResponseDto(blog);
         } else{
             return null;
@@ -62,7 +62,7 @@ public class BlogService {
             Blog blog = blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                     () -> new NullPointerException("해당 게시물은 존재하지 않습니다.")
             );
-            blog.update(requestDto);
+            blog.update(requestDto, user.getUsername());
             return new BlogResponseDto(blog);
         } else {
             return null;
@@ -73,6 +73,7 @@ public class BlogService {
         Blog blog = blogRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
+
         return new BlogResponseDto(blog);
     }
 
