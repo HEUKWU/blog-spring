@@ -1,5 +1,6 @@
 package com.hello.spring.controller;
 
+import com.hello.spring.dto.BlogListResponseDto;
 import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.dto.BlogResponseDto;
 import com.hello.spring.dto.StatusResponseDto;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class BlogController {
     }
 
     @GetMapping("/api/blog")
-    public List<BlogResponseDto> getBlog() {
+    public BlogListResponseDto getBlog() {
         return blogService.getBlog();
     }
 

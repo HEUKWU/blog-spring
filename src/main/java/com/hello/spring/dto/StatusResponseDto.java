@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class StatusResponseDto {
-    String msg;
-    int statusCode;
+    private String msg;
+    private int statusCode;
 
     public StatusResponseDto(String msg, int statusCode) {
         this.msg = msg;

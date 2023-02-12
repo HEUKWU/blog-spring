@@ -24,14 +24,15 @@ public class Blog extends Timestamped {
     @JoinColumn(name = "userId")
     private User user;
 
-    public Blog(BlogRequestDto requestDto) {
-
+    public Blog(BlogRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
+        this.user = user;
     }
 
-    public void update(BlogRequestDto requestDto) {
+    public void update(BlogRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
+        this.user = user;
     }
 }

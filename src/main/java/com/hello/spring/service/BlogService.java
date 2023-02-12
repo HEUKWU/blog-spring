@@ -1,5 +1,6 @@
 package com.hello.spring.service;
 
+import com.hello.spring.dto.BlogListResponseDto;
 import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.dto.BlogResponseDto;
 import com.hello.spring.dto.StatusResponseDto;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,19 +35,25 @@ public class BlogService {
 
             User user = validateUser(claims);
 
-            Blog blog = blogRepository.saveAndFlush(new Blog(requestDto));
-            return new BlogResponseDto(blog, user);
+            Blog blog = blogRepository.saveAndFlush(new Blog(requestDto, user));
+
+            return new BlogResponseDto(blog);
         } else{
             return null;
         }
     }
 
     @Transactional(readOnly = true)
-    public List<BlogResponseDto> getBlog() {
+    public BlogListResponseDto getBlog() {
+        BlogListResponseDto dto = new BlogListResponseDto();
+
         List<Blog> list = blogRepository.findAllByOrderByModifiedAtDesc();
-        return list.stream()
-                .map(BlogResponseDto::new)
-                .collect(Collectors.toList());
+
+        for (Blog blog : list) {
+            dto.addBlog(new BlogResponseDto(blog));
+        }
+
+        return dto;
     }
 
     @Transactional
@@ -63,8 +69,8 @@ public class BlogService {
             Blog blog = blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                     () -> new NullPointerException("해당 게시물은 존재하지 않습니다.")
             );
-            blog.update(requestDto);
-            return new BlogResponseDto(blog, user);
+            blog.update(requestDto, user);
+            return new BlogResponseDto(blog);
         } else {
             return null;
         }
@@ -76,7 +82,6 @@ public class BlogService {
         );
 
         User user = userRepository.findById(id).orElseThrow(IllegalArgumentException::new);
-
         return new BlogResponseDto(blog, user);
     }
 
@@ -90,7 +95,11 @@ public class BlogService {
 
             User user = validateUser(claims);
 
-            blogRepository.deleteById(id);
+            Blog blog = blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                    () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+            );
+
+            blogRepository.deleteById(blog.getId());
             return new StatusResponseDto("게시글 삭제 성공", 200);
         } else {
             return null;
