@@ -9,7 +9,6 @@ import com.hello.spring.entity.User;
 import com.hello.spring.entity.UserRoleEnum;
 import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.BlogRepository;
-import com.hello.spring.repository.ReplyRepository;
 import com.hello.spring.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final ReplyRepository replyRepository;
 
     @Transactional
     public BlogResponseDto createBlog(BlogRequestDto requestDto, HttpServletRequest request) {
@@ -93,9 +91,7 @@ public class BlogService {
         Blog blog = blogRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-
-        User user = userRepository.findById(id).orElseThrow(IllegalArgumentException::new);
-        return new BlogResponseDto(blog, user);
+        return new BlogResponseDto(blog);
     }
 
     public StatusResponseDto deleteBlog(Long id, HttpServletRequest request) {

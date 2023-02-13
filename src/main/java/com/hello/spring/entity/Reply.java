@@ -1,6 +1,5 @@
 package com.hello.spring.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hello.spring.dto.ReplyRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,12 +18,10 @@ public class Reply extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "blogId")
     private Blog blog;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;

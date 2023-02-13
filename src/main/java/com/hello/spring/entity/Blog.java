@@ -1,11 +1,11 @@
 package com.hello.spring.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hello.spring.dto.BlogRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,9 +26,8 @@ public class Blog extends Timestamped {
     @JoinColumn(name = "userId")
     private User user;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Reply> reply;
+    private List<Reply> reply = new ArrayList<>();
 
     public Blog(BlogRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
