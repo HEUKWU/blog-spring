@@ -3,7 +3,6 @@ package com.hello.spring.dto;
 import lombok.Getter;
 
 @Getter
-public class BlogRequestDto {
-    private String title;
+public class ReplyRequestDto {
     private String contents;
 }

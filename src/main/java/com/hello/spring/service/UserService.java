@@ -4,6 +4,7 @@ import com.hello.spring.dto.LoginRequestDto;
 import com.hello.spring.dto.SignupRequestDto;
 import com.hello.spring.dto.StatusResponseDto;
 import com.hello.spring.entity.User;
+import com.hello.spring.entity.UserRoleEnum;
 import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-//    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
     public StatusResponseDto signup(SignupRequestDto signupRequestDto) {
@@ -32,7 +33,15 @@ public class UserService {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
-        User user = new User(username, password);
+        UserRoleEnum role = UserRoleEnum.USER;
+        if (signupRequestDto.isAdmin()) {
+            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                throw new IllegalArgumentException("관리자 암호가 맞지 않습니다.");
+            }
+            role = UserRoleEnum.ADMIN;
+        }
+
+        User user = new User(username, password, role);
         userRepository.save(user);
         return new StatusResponseDto("회원가입 성공", 200);
     }

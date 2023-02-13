@@ -1,19 +1,25 @@
 package com.hello.spring.dto;
 
 import com.hello.spring.entity.Blog;
+import com.hello.spring.entity.Reply;
 import com.hello.spring.entity.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class BlogResponseDto {
-    private final Long id;
-    private final String title;
-    private final String userName;
-    private final String contents;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime modifiedAt;
+    private Long id;
+    private String title;
+    private String userName;
+    private String contents;
+    private LocalDateTime createdAt;
+    private LocalDateTime modifiedAt;
+    private List<Reply> commentList = new ArrayList<>();
 
     public BlogResponseDto(Blog blog) {
         this.id = blog.getId();
@@ -22,6 +28,7 @@ public class BlogResponseDto {
         this.contents = blog.getContents();
         this.createdAt = blog.getCreatedAt();
         this.modifiedAt = blog.getModifiedAt();
+        this.commentList = blog.getReply();
     }
 
     public BlogResponseDto(Blog blog, User user) {
@@ -31,6 +38,6 @@ public class BlogResponseDto {
         this.contents = blog.getContents();
         this.createdAt = blog.getCreatedAt();
         this.modifiedAt = blog.getModifiedAt();
+        this.commentList = blog.getReply();
     }
-
 }
