@@ -30,7 +30,7 @@ public class UserService {
         // 회원 중복 확인
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+            throw new IllegalCallerException("중복된 사용자가 존재합니다.");
         }
 
         UserRoleEnum role = UserRoleEnum.USER;

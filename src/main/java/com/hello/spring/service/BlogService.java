@@ -40,7 +40,7 @@ public class BlogService {
 
             return new BlogResponseDto(blog);
         } else{
-            return null;
+            throw new IllegalStateException("권한 없음");
         }
     }
 
@@ -75,14 +75,12 @@ public class BlogService {
                         () -> new NullPointerException("수정 권한이 없습니다.")
                 );
             } else {
-                blog = blogRepository.findById(id).orElseThrow(
-                        () -> new NullPointerException("해당 게시물은 존재하지 않습니다.")
-                );
+                blog = blogRepository.findById(id).orElseThrow(NullPointerException::new);
             }
             blog.update(requestDto, user);
             return new BlogResponseDto(blog);
         } else {
-            return null;
+            throw new IllegalStateException("권한 없음");
         }
     }
 
@@ -108,7 +106,7 @@ public class BlogService {
 
             if (role == UserRoleEnum.USER) {
                 Blog blog = blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new IllegalArgumentException("삭제 권한이 없습니다.")
+                        () -> new NullPointerException("삭제 권한이 없습니다.")
                 );
                 blogRepository.deleteById(blog.getId());
             } else {
@@ -117,7 +115,7 @@ public class BlogService {
 
             return new StatusResponseDto("게시글 삭제 성공", 200);
         } else {
-            return null;
+            throw new IllegalStateException("권한 없음");
         }
     }
 

@@ -44,7 +44,7 @@ public class ReplyService {
 
             return new ReplyResponseDto(reply, user);
         } else{
-            return null;
+            throw new IllegalStateException("권한 없음");
         }
     }
 
@@ -63,11 +63,11 @@ public class ReplyService {
 
             if (role == UserRoleEnum.USER) {
                 reply = replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new NullPointerException("수정 권한이 없습니다.")
+                        () -> new IllegalArgumentException("수정 권한이 없습니다.")
                 );
             } else {
                 reply = replyRepository.findById(id).orElseThrow(
-                        () -> new NullPointerException("해당 게시물은 존재하지 않습니다.")
+                        () -> new IllegalArgumentException("해당 게시물은 존재하지 않습니다.")
                 );
             }
 
@@ -75,7 +75,7 @@ public class ReplyService {
 
             return new ReplyResponseDto(reply);
         } else {
-            return null;
+            throw new IllegalStateException("권한 없음");
         }
     }
 
@@ -101,7 +101,7 @@ public class ReplyService {
 
             return new StatusResponseDto("댓글 삭제 성공", 200);
         } else {
-            return null;
+            throw new IllegalStateException("권한 없음");
         }
     }
 
