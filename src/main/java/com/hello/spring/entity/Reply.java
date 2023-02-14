@@ -3,11 +3,13 @@ package com.hello.spring.entity;
 import com.hello.spring.dto.ReplyRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class Reply extends Timestamped {
 
@@ -18,12 +20,12 @@ public class Reply extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
-    @ManyToOne
-    @JoinColumn(name = "blogId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blogId", nullable = false)
     private Blog blog;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     public Reply(ReplyRequestDto dto, Blog blog, User user) {
@@ -32,8 +34,7 @@ public class Reply extends Timestamped {
         this.user = user;
     }
 
-    public void update(ReplyRequestDto dto, User user) {
+    public void update(ReplyRequestDto dto) {
         this.contents = dto.getContents();
-        this.user = user;
     }
 }

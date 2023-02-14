@@ -29,7 +29,7 @@ public class BlogResponseDto {
         this.modifiedAt = blog.getModifiedAt();
 
         List<ReplyResponseDto> list = new ArrayList<>();
-        for (Reply reply : blog.getReply()) {
+        for (Reply reply : blog.getReplies()) {
             list.add(new ReplyResponseDto(reply));
         }
         this.commentList = list;
@@ -42,6 +42,6 @@ public class BlogResponseDto {
 //        this.contents = blog.getContents();
 //        this.createdAt = blog.getCreatedAt();
 //        this.modifiedAt = blog.getModifiedAt();
-//        this.commentList = blog.getReply();
+//        this.commentList = blog.getReplies();
 //    }
 }

@@ -3,17 +3,19 @@ package com.hello.spring.entity;
 import com.hello.spring.dto.BlogRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class Blog extends Timestamped {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
 
     @Column(nullable = false)
@@ -22,12 +24,12 @@ public class Blog extends Timestamped {
     @Column(nullable = false)
     private String contents;
 
-    @ManyToOne
-    @JoinColumn(name = "userId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Reply> reply = new ArrayList<>();
+    @OneToMany(mappedBy = "blog", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<Reply> replies = new ArrayList<>();
 
     public Blog(BlogRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
@@ -35,13 +37,13 @@ public class Blog extends Timestamped {
         this.user = user;
     }
 
-    public void update(BlogRequestDto requestDto, User user) {
+    public void update(BlogRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
-        this.user = user;
     }
 
     public void addReply(Reply reply) {
-        this.reply.add(reply);
+        replies.add(reply);
+        reply.setBlog(this);
     }
 }

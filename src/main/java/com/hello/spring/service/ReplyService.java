@@ -38,7 +38,7 @@ public class ReplyService {
 
             Blog blog = blogRepository.findById(id).orElseThrow(IllegalArgumentException::new);
 
-            Reply reply = replyRepository.saveAndFlush(new Reply(dto, blog, user));
+            Reply reply = replyRepository.save(new Reply(dto, blog, user));
 
             blog.addReply(reply);
 
@@ -71,7 +71,7 @@ public class ReplyService {
                 );
             }
 
-            reply.update(dto, user);
+            reply.update(dto);
 
             return new ReplyResponseDto(reply);
         } else {
@@ -89,15 +89,17 @@ public class ReplyService {
             User user = validateUser(claims);
 
             UserRoleEnum role = user.getRole();
+            Reply reply;
 
             if (role == UserRoleEnum.USER) {
-                Reply reply = replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
+                reply = replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                         () -> new IllegalArgumentException("삭제 권한이 없습니다.")
                 );
-                replyRepository.deleteById(reply.getId());
             } else {
-                replyRepository.findById(id);
+                reply = replyRepository.findById(id).orElseThrow();
             }
+
+            replyRepository.deleteById(reply.getId());
 
             return new StatusResponseDto("댓글 삭제 성공", 200);
         } else {
