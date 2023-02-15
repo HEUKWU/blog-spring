@@ -7,6 +7,9 @@ import com.hello.spring.dto.StatusResponseDto;
 import com.hello.spring.entity.Blog;
 import com.hello.spring.entity.User;
 import com.hello.spring.entity.UserRoleEnum;
+import com.hello.spring.exception.NotFoundContentsException;
+import com.hello.spring.exception.NotFoundMemberException;
+import com.hello.spring.exception.PermissionException;
 import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.BlogRepository;
 import com.hello.spring.repository.UserRepository;
@@ -62,9 +65,7 @@ public class BlogService {
 
     @Transactional
     public BlogResponseDto getSelectedBlog(Long id) {
-        Blog blog = blogRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
+        Blog blog = blogRepository.findById(id).orElseThrow(NotFoundMemberException::new);
         return new BlogResponseDto(blog);
     }
 
@@ -82,7 +83,7 @@ public class BlogService {
 
     private Blog getBlog(Long id, User user) {
         return (user.getRole() == UserRoleEnum.USER) ?
-                blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(IllegalArgumentException::new) :
-                blogRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+                blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(PermissionException::new) :
+                blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
     }
 }

@@ -7,6 +7,8 @@ import com.hello.spring.entity.Blog;
 import com.hello.spring.entity.Reply;
 import com.hello.spring.entity.User;
 import com.hello.spring.entity.UserRoleEnum;
+import com.hello.spring.exception.NotFoundContentsException;
+import com.hello.spring.exception.PermissionException;
 import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.BlogRepository;
 import com.hello.spring.repository.ReplyRepository;
@@ -31,14 +33,13 @@ public class ReplyService {
 
         User user = jwtUtil.getUser(request, userRepository);
 
-        Blog blog = blogRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        Blog blog = blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
 
         Reply reply = replyRepository.save(new Reply(dto, blog, user));
 
         blog.addReply(reply);
 
         return new ReplyResponseDto(reply, user);
-
     }
 
     @Transactional
@@ -66,7 +67,7 @@ public class ReplyService {
 
     private Reply getReply(Long id, User user) {
         return (user.getRole() == UserRoleEnum.USER) ?
-                replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(IllegalArgumentException::new) :
-                replyRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+                replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(PermissionException::new) :
+                replyRepository.findById(id).orElseThrow(NotFoundContentsException::new);
     }
 }

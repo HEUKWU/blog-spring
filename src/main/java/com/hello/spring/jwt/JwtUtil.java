@@ -3,6 +3,7 @@ package com.hello.spring.jwt;
 
 import com.hello.spring.entity.User;
 import com.hello.spring.entity.UserRoleEnum;
+import com.hello.spring.exception.InvalidTokenException;
 import com.hello.spring.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -83,12 +84,10 @@ public class JwtUtil {
     public User getUser(HttpServletRequest request, UserRepository userRepository) {
         String token = resolveToken(request);
         if (token == null || !validateToken(token)) {
-            throw new IllegalArgumentException("권한 없음");
+            throw new InvalidTokenException();
         }
         Claims claims = getUserInfoFromToken(token);
-        return userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-        );
+        return userRepository.findByUsername(claims.getSubject()).orElseThrow(InvalidTokenException::new);
     }
 
     // 토큰에서 사용자 정보 가져오기
