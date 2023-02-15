@@ -1,7 +1,9 @@
 package com.hello.spring.jwt;
 
 
+import com.hello.spring.entity.User;
 import com.hello.spring.entity.UserRoleEnum;
+import com.hello.spring.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
@@ -76,6 +78,17 @@ public class JwtUtil {
             log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }
         return false;
+    }
+
+    public User getUser(HttpServletRequest request, UserRepository userRepository) {
+        String token = resolveToken(request);
+        if (token == null || !validateToken(token)) {
+            throw new IllegalArgumentException("권한 없음");
+        }
+        Claims claims = getUserInfoFromToken(token);
+        return userRepository.findByUsername(claims.getSubject()).orElseThrow(
+                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+        );
     }
 
     // 토큰에서 사용자 정보 가져오기

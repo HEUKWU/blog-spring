@@ -11,7 +11,6 @@ import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.BlogRepository;
 import com.hello.spring.repository.ReplyRepository;
 import com.hello.spring.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,98 +27,46 @@ public class ReplyService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public ReplyResponseDto addReply(Long id,ReplyRequestDto dto, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
+    public ReplyResponseDto addReply(Long id, ReplyRequestDto dto, HttpServletRequest request) {
 
-        if (token != null) {
-            Claims claims = getClaims(token);
+        User user = jwtUtil.getUser(request, userRepository);
 
-            User user = validateUser(claims);
+        Blog blog = blogRepository.findById(id).orElseThrow(IllegalArgumentException::new);
 
-            Blog blog = blogRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+        Reply reply = replyRepository.save(new Reply(dto, blog, user));
 
-            Reply reply = replyRepository.save(new Reply(dto, blog, user));
+        blog.addReply(reply);
 
-            blog.addReply(reply);
+        return new ReplyResponseDto(reply, user);
 
-            return new ReplyResponseDto(reply, user);
-        } else{
-            throw new IllegalStateException("권한 없음");
-        }
     }
 
     @Transactional
     public ReplyResponseDto update(Long id, ReplyRequestDto dto, HttpServletRequest request) {
 
-        String token = jwtUtil.resolveToken(request);
+        User user = jwtUtil.getUser(request, userRepository);
 
-        if (token != null) {
-            Claims claims = getClaims(token);
+        Reply reply = getReply(id, user);
 
-            User user = validateUser(claims);
+        reply.update(dto);
 
-            UserRoleEnum role = user.getRole();
-            Reply reply;
-
-            if (role == UserRoleEnum.USER) {
-                reply = replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new IllegalArgumentException("수정 권한이 없습니다.")
-                );
-            } else {
-                reply = replyRepository.findById(id).orElseThrow(
-                        () -> new IllegalArgumentException("해당 게시물은 존재하지 않습니다.")
-                );
-            }
-
-            reply.update(dto);
-
-            return new ReplyResponseDto(reply);
-        } else {
-            throw new IllegalStateException("권한 없음");
-        }
+        return new ReplyResponseDto(reply);
     }
 
     @Transactional
     public StatusResponseDto delete(Long id, HttpServletRequest request) {
-        String token = jwtUtil.resolveToken(request);
+        User user = jwtUtil.getUser(request, userRepository);
 
-        if (token != null) {
-            Claims claims = getClaims(token);
+        Reply reply = getReply(id, user);
 
-            User user = validateUser(claims);
+        replyRepository.deleteById(reply.getId());
 
-            UserRoleEnum role = user.getRole();
-            Reply reply;
-
-            if (role == UserRoleEnum.USER) {
-                reply = replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                        () -> new IllegalArgumentException("삭제 권한이 없습니다.")
-                );
-            } else {
-                reply = replyRepository.findById(id).orElseThrow();
-            }
-
-            replyRepository.deleteById(reply.getId());
-
-            return new StatusResponseDto("댓글 삭제 성공", 200);
-        } else {
-            throw new IllegalStateException("권한 없음");
-        }
+        return new StatusResponseDto("댓글 삭제 성공", 200);
     }
 
-    private User validateUser(Claims claims) {
-        return userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
-        );
-    }
-
-    private Claims getClaims(String token) {
-        Claims claims;
-        if (jwtUtil.validateToken(token)) {
-            claims = jwtUtil.getUserInfoFromToken(token);
-        } else {
-            throw new IllegalStateException("Token Error");
-        }
-        return claims;
+    private Reply getReply(Long id, User user) {
+        return (user.getRole() == UserRoleEnum.USER) ?
+                replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(IllegalArgumentException::new) :
+                replyRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 }
