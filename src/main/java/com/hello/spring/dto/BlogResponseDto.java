@@ -1,13 +1,13 @@
 package com.hello.spring.dto;
 
 import com.hello.spring.entity.Blog;
-import com.hello.spring.entity.Reply;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -27,12 +27,9 @@ public class BlogResponseDto {
         this.contents = blog.getContents();
         this.createdAt = blog.getCreatedAt();
         this.modifiedAt = blog.getModifiedAt();
-    }
-
-    public List<ReplyResponseDto> getReplies(List<Reply> replies) {
-        for (Reply reply : replies) {
-            commentList.add(new ReplyResponseDto(reply));
-        }
-        return commentList;
+        this.commentList = blog.getReplies().stream().sorted((a, b) ->
+                        b.getModifiedAt().compareTo(a.getModifiedAt()))
+                        .map(ReplyResponseDto::new)
+                        .collect(Collectors.toList());
     }
 }

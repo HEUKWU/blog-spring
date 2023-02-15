@@ -30,11 +30,8 @@ public class ReplyService {
 
     @Transactional
     public ReplyResponseDto addReply(Long id, ReplyRequestDto dto, HttpServletRequest request) {
-
         User user = jwtUtil.getUser(request, userRepository);
-
         Blog blog = blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
-
         Reply reply = replyRepository.save(new Reply(dto, blog, user));
 
         return new ReplyResponseDto(reply, user);
@@ -42,11 +39,8 @@ public class ReplyService {
 
     @Transactional
     public ReplyResponseDto update(Long id, ReplyRequestDto dto, HttpServletRequest request) {
-
         User user = jwtUtil.getUser(request, userRepository);
-
         Reply reply = getReply(id, user);
-
         reply.update(dto);
 
         return new ReplyResponseDto(reply);
@@ -55,9 +49,7 @@ public class ReplyService {
     @Transactional
     public StatusResponseDto delete(Long id, HttpServletRequest request) {
         User user = jwtUtil.getUser(request, userRepository);
-
         Reply reply = getReply(id, user);
-
         replyRepository.deleteById(reply.getId());
 
         return new StatusResponseDto("댓글 삭제 성공", 200);
