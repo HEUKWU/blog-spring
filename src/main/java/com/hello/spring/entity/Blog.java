@@ -41,9 +41,4 @@ public class Blog extends Timestamped {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();
     }
-
-    public void addReply(Reply reply) {
-        replies.add(reply);
-        reply.setBlog(this);
-    }
 }

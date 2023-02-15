@@ -27,21 +27,12 @@ public class BlogResponseDto {
         this.contents = blog.getContents();
         this.createdAt = blog.getCreatedAt();
         this.modifiedAt = blog.getModifiedAt();
-
-        List<ReplyResponseDto> list = new ArrayList<>();
-        for (Reply reply : blog.getReplies()) {
-            list.add(new ReplyResponseDto(reply));
-        }
-        this.commentList = list;
     }
 
-//    public BlogResponseDto(Blog blog, User user) {
-//        this.id = blog.getId();
-//        this.title = blog.getTitle();
-//        this.userName = user.getUsername();
-//        this.contents = blog.getContents();
-//        this.createdAt = blog.getCreatedAt();
-//        this.modifiedAt = blog.getModifiedAt();
-//        this.commentList = blog.getReplies();
-//    }
+    public List<ReplyResponseDto> getReplies(List<Reply> replies) {
+        for (Reply reply : replies) {
+            commentList.add(new ReplyResponseDto(reply));
+        }
+        return commentList;
+    }
 }

@@ -37,8 +37,6 @@ public class ReplyService {
 
         Reply reply = replyRepository.save(new Reply(dto, blog, user));
 
-        blog.addReply(reply);
-
         return new ReplyResponseDto(reply, user);
     }
 

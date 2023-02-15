@@ -5,6 +5,7 @@ import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.dto.BlogResponseDto;
 import com.hello.spring.dto.StatusResponseDto;
 import com.hello.spring.entity.Blog;
+import com.hello.spring.entity.Reply;
 import com.hello.spring.entity.User;
 import com.hello.spring.entity.UserRoleEnum;
 import com.hello.spring.exception.NotFoundContentsException;
@@ -12,6 +13,7 @@ import com.hello.spring.exception.NotFoundMemberException;
 import com.hello.spring.exception.PermissionException;
 import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.BlogRepository;
+import com.hello.spring.repository.ReplyRepository;
 import com.hello.spring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ import java.util.List;
 public class BlogService {
 
     private final BlogRepository blogRepository;
+    private final ReplyRepository replyRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
@@ -43,9 +46,12 @@ public class BlogService {
         BlogListResponseDto dto = new BlogListResponseDto();
 
         List<Blog> list = blogRepository.findAllByOrderByModifiedAtDesc();
+        List<Reply> replies = replyRepository.findAllByOrderByModifiedAtDesc();
 
         for (Blog blog : list) {
-            dto.addBlog(new BlogResponseDto(blog));
+            BlogResponseDto blogDto = new BlogResponseDto(blog);
+            blogDto.getReplies(replies);
+            dto.addBlog(blogDto);
         }
 
         return dto;
@@ -66,7 +72,11 @@ public class BlogService {
     @Transactional
     public BlogResponseDto getSelectedBlog(Long id) {
         Blog blog = blogRepository.findById(id).orElseThrow(NotFoundMemberException::new);
-        return new BlogResponseDto(blog);
+        List<Reply> replies = replyRepository.findAllByOrderByModifiedAtDesc();
+
+        BlogResponseDto dto = new BlogResponseDto(blog);
+        dto.getReplies(replies);
+        return dto;
     }
 
     @Transactional
