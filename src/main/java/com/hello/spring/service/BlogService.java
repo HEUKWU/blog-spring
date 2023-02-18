@@ -10,14 +10,11 @@ import com.hello.spring.entity.UserRoleEnum;
 import com.hello.spring.exception.NotFoundContentsException;
 import com.hello.spring.exception.NotFoundMemberException;
 import com.hello.spring.exception.PermissionException;
-import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.BlogRepository;
-import com.hello.spring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -25,12 +22,9 @@ import java.util.List;
 public class BlogService {
 
     private final BlogRepository blogRepository;
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
 
     @Transactional
-    public BlogResponseDto createBlog(BlogRequestDto requestDto, HttpServletRequest request) {
-        User user = jwtUtil.getUser(request, userRepository);
+    public BlogResponseDto createBlog(BlogRequestDto requestDto, User user) {
         Blog blog = blogRepository.save(new Blog(requestDto, user));
 
         return new BlogResponseDto(blog);
@@ -48,8 +42,7 @@ public class BlogService {
     }
 
     @Transactional
-    public BlogResponseDto update(Long id, BlogRequestDto requestDto, HttpServletRequest request) {
-        User user = jwtUtil.getUser(request, userRepository);
+    public BlogResponseDto update(Long id, BlogRequestDto requestDto, User user) {
         Blog blog = getBlog(id, user);
         blog.update(requestDto);
 
@@ -64,8 +57,7 @@ public class BlogService {
     }
 
     @Transactional
-    public StatusResponseDto deleteBlog(Long id, HttpServletRequest request) {
-        User user = jwtUtil.getUser(request, userRepository);
+    public StatusResponseDto deleteBlog(Long id, User user) {
         Blog blog = getBlog(id, user);
         blogRepository.deleteById(blog.getId());
 

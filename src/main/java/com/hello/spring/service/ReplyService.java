@@ -9,15 +9,11 @@ import com.hello.spring.entity.User;
 import com.hello.spring.entity.UserRoleEnum;
 import com.hello.spring.exception.NotFoundContentsException;
 import com.hello.spring.exception.PermissionException;
-import com.hello.spring.jwt.JwtUtil;
 import com.hello.spring.repository.BlogRepository;
 import com.hello.spring.repository.ReplyRepository;
-import com.hello.spring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor
 @Service
@@ -25,12 +21,9 @@ public class ReplyService {
 
     private final ReplyRepository replyRepository;
     private final BlogRepository blogRepository;
-    private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
 
     @Transactional
-    public ReplyResponseDto addReply(Long id, ReplyRequestDto dto, HttpServletRequest request) {
-        User user = jwtUtil.getUser(request, userRepository);
+    public ReplyResponseDto addReply(Long id, ReplyRequestDto dto, User user) {
         Blog blog = blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
         Reply reply = replyRepository.save(new Reply(dto, blog, user));
 
@@ -38,8 +31,7 @@ public class ReplyService {
     }
 
     @Transactional
-    public ReplyResponseDto update(Long id, ReplyRequestDto dto, HttpServletRequest request) {
-        User user = jwtUtil.getUser(request, userRepository);
+    public ReplyResponseDto update(Long id, ReplyRequestDto dto, User user) {
         Reply reply = getReply(id, user);
         reply.update(dto);
 
@@ -47,8 +39,7 @@ public class ReplyService {
     }
 
     @Transactional
-    public StatusResponseDto delete(Long id, HttpServletRequest request) {
-        User user = jwtUtil.getUser(request, userRepository);
+    public StatusResponseDto delete(Long id, User user) {
         Reply reply = getReply(id, user);
         replyRepository.deleteById(reply.getId());
 
