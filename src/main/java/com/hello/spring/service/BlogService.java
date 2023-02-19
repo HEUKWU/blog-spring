@@ -4,24 +4,25 @@ import com.hello.spring.dto.BlogListResponseDto;
 import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.dto.BlogResponseDto;
 import com.hello.spring.dto.StatusResponseDto;
-import com.hello.spring.entity.Blog;
-import com.hello.spring.entity.User;
-import com.hello.spring.entity.UserRoleEnum;
+import com.hello.spring.entity.*;
 import com.hello.spring.exception.NotFoundContentsException;
 import com.hello.spring.exception.NotFoundMemberException;
 import com.hello.spring.exception.PermissionException;
+import com.hello.spring.repository.BlogLikeRepository;
 import com.hello.spring.repository.BlogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BlogService {
 
     private final BlogRepository blogRepository;
+    private final BlogLikeRepository blogLikeRepository;
 
     @Transactional
     public BlogResponseDto createBlog(BlogRequestDto requestDto, User user) {
@@ -62,6 +63,18 @@ public class BlogService {
         blogRepository.deleteById(blog.getId());
 
         return new StatusResponseDto("게시글 삭제 성공", 200);
+    }
+
+    @Transactional
+    public StatusResponseDto like(Long id, User user) {
+        Blog blog = blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
+        Optional<BlogLike> found = blogLikeRepository.findByUserId(user.getId());
+        if (found.isPresent()) {
+            blogLikeRepository.deleteBlogLikeByUserId(user.getId());
+            return new StatusResponseDto("좋아요 취소", 200);
+        }
+        blogLikeRepository.save(new BlogLike(blog, user));
+        return new StatusResponseDto("좋아요 성공", 200);
     }
 
     private Blog getBlog(Long id, User user) {

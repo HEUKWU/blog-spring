@@ -29,4 +29,9 @@ public class ReplyController {
     public StatusResponseDto deleteReply(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return replyService.delete(id, userDetails.getUser());
     }
+
+    @PostMapping("/api/reply/like/{id}")
+    public StatusResponseDto replyLike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return replyService.like(id, userDetails.getUser());
+    }
 }

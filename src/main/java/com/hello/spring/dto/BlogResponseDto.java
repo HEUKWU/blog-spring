@@ -18,6 +18,7 @@ public class BlogResponseDto {
     private String contents;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private Integer likeCount;
     private List<ReplyResponseDto> commentList = new ArrayList<>();
 
     public BlogResponseDto(Blog blog) {
@@ -27,6 +28,7 @@ public class BlogResponseDto {
         this.contents = blog.getContents();
         this.createdAt = blog.getCreatedAt();
         this.modifiedAt = blog.getModifiedAt();
+        this.likeCount = blog.getBlogLikes().size();
         this.commentList = blog.getReplies().stream().sorted((a, b) ->
                         b.getModifiedAt().compareTo(a.getModifiedAt()))
                         .map(ReplyResponseDto::new)

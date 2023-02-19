@@ -9,18 +9,12 @@ import com.hello.spring.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequiredArgsConstructor
 public class BlogController {
 
     private final BlogService blogService;
-
-    @GetMapping("/")
-    public ModelAndView home() {
-        return new ModelAndView("index");
-    }
 
     @PostMapping("/api/blog")
     public BlogResponseDto createBlog(@RequestBody BlogRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -45,5 +39,10 @@ public class BlogController {
     @DeleteMapping("/api/blog/{id}")
     public StatusResponseDto deleteBlog(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return blogService.deleteBlog(id, userDetails.getUser());
+    }
+
+    @PostMapping("/api/blog/like/{id}")
+    public StatusResponseDto blogLike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return blogService.like(id, userDetails.getUser());
     }
 }

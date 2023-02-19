@@ -29,6 +29,9 @@ public class Blog extends Timestamped {
     @OneToMany(mappedBy = "blog", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Reply> replies = new ArrayList<>();
 
+    @OneToMany(mappedBy = "blog", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<BlogLike> blogLikes = new ArrayList<>();
+
     public Blog(BlogRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.contents = requestDto.getContents();

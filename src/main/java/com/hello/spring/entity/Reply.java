@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,6 +27,9 @@ public class Reply extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "reply")
+    private List<ReplyLike> replyLikes = new ArrayList<>();
 
     public Reply(ReplyRequestDto dto, Blog blog, User user) {
         this.contents = dto.getContents();
