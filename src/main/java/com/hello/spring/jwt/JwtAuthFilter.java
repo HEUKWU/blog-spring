@@ -1,11 +1,8 @@
 package com.hello.spring.jwt;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hello.spring.dto.SecurityExceptionDto;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,14 +25,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = jwtUtil.resolveToken(request);
 
-        if (token != null) {
-            if (!jwtUtil.validateToken(token)) {
-                jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
-                return;
-            }
+        if (jwtUtil.validateToken(token)) {
             Claims info = jwtUtil.getUserInfoFromToken(token);
             setAuthentication(info.getSubject());
         }
+
         filterChain.doFilter(request, response);
     }
 
@@ -45,16 +39,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
-    }
-
-    public void jwtExceptionHandler(HttpServletResponse response, String msg, int statusCode) {
-        response.setStatus(statusCode);
-        response.setContentType("application/json");
-        try {
-            String json = new ObjectMapper().writeValueAsString(new SecurityExceptionDto(statusCode, msg));
-            response.getWriter().write(json);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-        }
     }
 }

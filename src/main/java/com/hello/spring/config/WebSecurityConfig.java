@@ -1,7 +1,9 @@
 package com.hello.spring.config;
 
+import com.hello.spring.security.CustomAccessDeniedHandler;
 import com.hello.spring.jwt.JwtAuthFilter;
 import com.hello.spring.jwt.JwtUtil;
+import com.hello.spring.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +25,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,6 +48,10 @@ public class WebSecurityConfig {
 
         http.authorizeRequests().antMatchers("/api/user/**").permitAll()
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);
+
+        http.exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
 
         return http.build();
     }

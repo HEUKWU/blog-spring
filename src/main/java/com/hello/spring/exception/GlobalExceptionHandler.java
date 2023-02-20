@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class ExceptionController {
+public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundMemberException.class)
     public ResponseEntity<StatusResponseDto> notFoundMember() {
         return new ResponseEntity<>(new StatusResponseDto("회원을 찾을 수 없습니다.", 400), HttpStatus.BAD_GATEWAY);
