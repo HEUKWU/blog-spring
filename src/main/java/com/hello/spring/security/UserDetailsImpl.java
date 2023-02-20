@@ -1,6 +1,7 @@
 package com.hello.spring.security;
 
 import com.hello.spring.entity.User;
+import com.hello.spring.entity.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,10 +25,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String authority = user.getRole().getAuthority();
+        UserRoleEnum role = user.getRole();
+        String authority = role.getAuthority();
 
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(authority));
+        authorities.add(simpleGrantedAuthority);
 
         return authorities;
     }

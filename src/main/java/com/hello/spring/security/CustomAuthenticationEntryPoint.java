@@ -16,7 +16,7 @@ import java.io.OutputStream;
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private static final StatusResponseDto dto = new StatusResponseDto(HttpStatus.UNAUTHORIZED.getReasonPhrase(), HttpStatus.UNAUTHORIZED.value());
+    private static final StatusResponseDto dto = new StatusResponseDto("토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
