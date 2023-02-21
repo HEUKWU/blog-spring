@@ -67,8 +67,8 @@ public class BlogService {
     @Transactional
     public StatusResponseDto like(Long id, User user) {
         Blog blog = blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
-        Optional<BlogLike> found = blogLikeRepository.findByUserId(user.getId());
-        return getStatusResponseDto(user, blog, found);
+
+        return getStatusResponseDto(user, blog);
     }
 
     //메서드 추출
@@ -78,7 +78,8 @@ public class BlogService {
                 blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
     }
 
-    private StatusResponseDto getStatusResponseDto(User user, Blog blog, Optional<BlogLike> found) {
+    private StatusResponseDto getStatusResponseDto(User user, Blog blog) {
+        Optional<BlogLike> found = blogLikeRepository.findByUserId(user.getId());
         if (found.isPresent()) {
             blogLikeRepository.deleteBlogLikeByUserId(user.getId());
             return new StatusResponseDto("좋아요 취소", 200);

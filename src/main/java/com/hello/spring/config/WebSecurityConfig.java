@@ -1,13 +1,14 @@
 package com.hello.spring.config;
 
-import com.hello.spring.security.CustomAccessDeniedHandler;
 import com.hello.spring.jwt.JwtAuthFilter;
 import com.hello.spring.jwt.JwtUtil;
+import com.hello.spring.security.CustomAccessDeniedHandler;
 import com.hello.spring.security.CustomAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,7 +39,7 @@ public class WebSecurityConfig {
         // h2-console 사용 및 resources 접근 허용 설정
         return (web) -> web.ignoring()
                 .requestMatchers(PathRequest.toH2Console())
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                .antMatchers("/swagger-ui/**", "/v3/api-docs/**");
     }
 
     @Bean
@@ -48,6 +49,7 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests().antMatchers("/api/user/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/blog/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

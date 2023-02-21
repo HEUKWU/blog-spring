@@ -50,6 +50,7 @@ public class ReplyService {
     @Transactional
     public StatusResponseDto like(Long id, User user) {
         Reply reply = replyRepository.findById(id).orElseThrow(NotFoundContentsException::new);
+
         return getStatusResponseDto(user, reply);
     }
 
