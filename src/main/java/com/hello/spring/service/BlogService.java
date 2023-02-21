@@ -27,7 +27,6 @@ public class BlogService {
     @Transactional
     public BlogResponseDto createBlog(BlogRequestDto requestDto, User user) {
         Blog blog = blogRepository.save(new Blog(requestDto, user));
-
         return new BlogResponseDto(blog);
     }
 
@@ -69,17 +68,22 @@ public class BlogService {
     public StatusResponseDto like(Long id, User user) {
         Blog blog = blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
         Optional<BlogLike> found = blogLikeRepository.findByUserId(user.getId());
+        return getStatusResponseDto(user, blog, found);
+    }
+
+    //메서드 추출
+    private Blog getBlog(Long id, User user) {
+        return (user.getRole() == UserRoleEnum.USER) ?
+                blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(PermissionException::new) :
+                blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
+    }
+
+    private StatusResponseDto getStatusResponseDto(User user, Blog blog, Optional<BlogLike> found) {
         if (found.isPresent()) {
             blogLikeRepository.deleteBlogLikeByUserId(user.getId());
             return new StatusResponseDto("좋아요 취소", 200);
         }
         blogLikeRepository.save(new BlogLike(blog, user));
         return new StatusResponseDto("좋아요 성공", 200);
-    }
-
-    private Blog getBlog(Long id, User user) {
-        return (user.getRole() == UserRoleEnum.USER) ?
-                blogRepository.findByIdAndUserId(id, user.getId()).orElseThrow(PermissionException::new) :
-                blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
     }
 }

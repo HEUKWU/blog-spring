@@ -1,5 +1,6 @@
 package com.hello.spring.util;
 
+import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.entity.Blog;
 import com.hello.spring.entity.Reply;
 import com.hello.spring.entity.User;
@@ -40,7 +41,7 @@ public class TestDataRunner implements ApplicationRunner {
     }
 
     private void createBlog(String title, String contents, User user) {
-        blogRepository.save(new Blog(title, contents, user));
+        blogRepository.save(new Blog(new BlogRequestDto(title, contents), user));
     }
 
     private void createReply(Long id, String contents, User user) {

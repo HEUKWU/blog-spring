@@ -26,7 +26,7 @@ public class ReplyService {
     @Transactional
     public ReplyResponseDto addReply(Long id, ReplyRequestDto dto, User user) {
         Blog blog = blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
-        Reply reply = replyRepository.save(new Reply(dto, blog, user));
+        Reply reply = replyRepository.save(new Reply(dto.getContents(), blog, user));
 
         return new ReplyResponseDto(reply);
     }
@@ -34,7 +34,7 @@ public class ReplyService {
     @Transactional
     public ReplyResponseDto update(Long id, ReplyRequestDto dto, User user) {
         Reply reply = getReply(id, user);
-        reply.update(dto);
+        reply.update(dto.getContents());
 
         return new ReplyResponseDto(reply);
     }
@@ -50,6 +50,17 @@ public class ReplyService {
     @Transactional
     public StatusResponseDto like(Long id, User user) {
         Reply reply = replyRepository.findById(id).orElseThrow(NotFoundContentsException::new);
+        return getStatusResponseDto(user, reply);
+    }
+
+    //메서드 추출
+    private Reply getReply(Long id, User user) {
+        return (user.getRole() == UserRoleEnum.USER) ?
+                replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(PermissionException::new) :
+                replyRepository.findById(id).orElseThrow(NotFoundContentsException::new);
+    }
+
+    private StatusResponseDto getStatusResponseDto(User user, Reply reply) {
         Optional<ReplyLike> found = replyLikeRepository.findByUserId(user.getId());
         if (found.isPresent()) {
             replyLikeRepository.deleteReplyLikeByUserId(user.getId());
@@ -57,11 +68,5 @@ public class ReplyService {
         }
         replyLikeRepository.save(new ReplyLike(reply, user));
         return new StatusResponseDto("좋아요 성공", 200);
-    }
-
-    private Reply getReply(Long id, User user) {
-        return (user.getRole() == UserRoleEnum.USER) ?
-                replyRepository.findByIdAndUserId(id, user.getId()).orElseThrow(PermissionException::new) :
-                replyRepository.findById(id).orElseThrow(NotFoundContentsException::new);
     }
 }
