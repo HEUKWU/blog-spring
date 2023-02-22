@@ -18,8 +18,8 @@ public class SwaggerConfig {
 
         Info info = new Info()
                 .version("1.0")
-                .title("API 타이틀")
-                .description("API Description");
+                .title("API")
+                .description("API");
 
         // SecuritySecheme명
         String jwtSchemeName = "Authorization";
