@@ -3,7 +3,7 @@ package com.hello.spring.controller;
 import com.hello.spring.dto.BlogListResponseDto;
 import com.hello.spring.dto.BlogRequestDto;
 import com.hello.spring.dto.BlogResponseDto;
-import com.hello.spring.dto.StatusResponseDto;
+import com.hello.spring.dto.ResponseDto;
 import com.hello.spring.security.UserDetailsImpl;
 import com.hello.spring.service.BlogService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class BlogController {
     private final BlogService blogService;
 
     @PostMapping("/api/blog")
-    public BlogResponseDto createBlog(@RequestBody BlogRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseDto<BlogResponseDto> createBlog(@RequestBody BlogRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return blogService.createBlog(requestDto, userDetails.getUser());
     }
 
@@ -37,12 +37,12 @@ public class BlogController {
     }
 
     @DeleteMapping("/api/blog/{id}")
-    public StatusResponseDto deleteBlog(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseDto<?> deleteBlog(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return blogService.deleteBlog(id, userDetails.getUser());
     }
 
     @PostMapping("/api/blog/like/{id}")
-    public StatusResponseDto blogLike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseDto<?> blogLike(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return blogService.like(id, userDetails.getUser());
     }
 }
