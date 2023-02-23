@@ -1,7 +1,7 @@
 package com.hello.spring.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hello.spring.dto.StatusResponseDto;
+import com.hello.spring.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,7 +16,7 @@ import java.io.OutputStream;
 @Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
-    private static final StatusResponseDto dto = new StatusResponseDto("권한이 없습니다.", HttpStatus.FORBIDDEN.value());
+    private static final ResponseDto dto = new ResponseDto("권한이 없습니다.", HttpStatus.FORBIDDEN.value());
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {

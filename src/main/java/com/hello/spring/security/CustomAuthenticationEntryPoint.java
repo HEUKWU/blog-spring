@@ -1,7 +1,7 @@
 package com.hello.spring.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hello.spring.dto.StatusResponseDto;
+import com.hello.spring.dto.ResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
@@ -16,7 +16,7 @@ import java.io.OutputStream;
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private static final StatusResponseDto dto = new StatusResponseDto("토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
+    private static final ResponseDto dto = new ResponseDto("토큰이 유효하지 않습니다.", HttpStatus.UNAUTHORIZED.value());
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {

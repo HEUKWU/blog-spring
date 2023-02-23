@@ -2,7 +2,7 @@ package com.hello.spring.service;
 
 import com.hello.spring.dto.ReplyRequestDto;
 import com.hello.spring.dto.ReplyResponseDto;
-import com.hello.spring.dto.StatusResponseDto;
+import com.hello.spring.dto.ResponseDto;
 import com.hello.spring.entity.*;
 import com.hello.spring.exception.NotFoundContentsException;
 import com.hello.spring.exception.PermissionException;
@@ -24,31 +24,29 @@ public class ReplyService {
     private final ReplyLikeRepository replyLikeRepository;
 
     @Transactional
-    public ReplyResponseDto addReply(Long id, ReplyRequestDto dto, User user) {
+    public ResponseDto<ReplyResponseDto> addReply(Long id, ReplyRequestDto dto, User user) {
         Blog blog = blogRepository.findById(id).orElseThrow(NotFoundContentsException::new);
         Reply reply = replyRepository.save(new Reply(dto.getContents(), blog, user));
-
-        return new ReplyResponseDto(reply);
+        return ResponseDto.ok("성공", new ReplyResponseDto(reply));
     }
 
     @Transactional
-    public ReplyResponseDto update(Long id, ReplyRequestDto dto, User user) {
+    public ResponseDto<ReplyResponseDto> update(Long id, ReplyRequestDto dto, User user) {
         Reply reply = getReply(id, user);
         reply.update(dto.getContents());
-
-        return new ReplyResponseDto(reply);
+        return ResponseDto.ok("성공", new ReplyResponseDto(reply));
     }
 
     @Transactional
-    public StatusResponseDto delete(Long id, User user) {
+    public ResponseDto<?> delete(Long id, User user) {
         Reply reply = getReply(id, user);
         replyRepository.deleteById(reply.getId());
 
-        return new StatusResponseDto("댓글 삭제 성공", 200);
+        return ResponseDto.ok("댓글 삭제 성공", null);
     }
 
     @Transactional
-    public StatusResponseDto like(Long id, User user) {
+    public ResponseDto<?> like(Long id, User user) {
         Reply reply = replyRepository.findById(id).orElseThrow(NotFoundContentsException::new);
 
         return getStatusResponseDto(user, reply);
@@ -61,13 +59,13 @@ public class ReplyService {
                 replyRepository.findById(id).orElseThrow(NotFoundContentsException::new);
     }
 
-    private StatusResponseDto getStatusResponseDto(User user, Reply reply) {
+    private ResponseDto<?> getStatusResponseDto(User user, Reply reply) {
         Optional<ReplyLike> found = replyLikeRepository.findByUserId(user.getId());
         if (found.isPresent()) {
             replyLikeRepository.deleteReplyLikeByUserId(user.getId());
-            return new StatusResponseDto("좋아요 취소", 200);
+            return ResponseDto.ok("좋아요 취소", null);
         }
         replyLikeRepository.save(new ReplyLike(reply, user));
-        return new StatusResponseDto("좋아요 성공", 200);
+        return ResponseDto.ok("좋아요 성공", null);
     }
 }
